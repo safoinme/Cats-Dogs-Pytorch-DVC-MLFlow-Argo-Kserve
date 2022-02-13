@@ -22,6 +22,7 @@ CMD echo "Welcome to the PyTorch Docker Container!" && \
     echo "Version of Torchvision Installed: " && python -c 'import torchvision; print(torchvision.__version__)' && \
     echo "LDD output showing successful linking with BLIS: " && ldd /opt/conda/lib/python3.8/site-packages/torch/_C.cpython-38-x86_64-linux-gnu.so && \
     /bin/bash
+
 RUN --mount=type=cache,id=apt-dev,target=/var/cache/apt \
     apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
@@ -72,6 +73,6 @@ RUN git clone https://github.com/pytorch/serve.git && cd serve/model-archiver &&
 WORKDIR /app
 
 ADD requirements.txt /
-RUN python3 -m pip install --no-cache-dir -r /requirements.txt
+RUN conda install  --no-cache-dir -r /requirements.txt
 
 ENTRYPOINT ["/bin/sh"]
