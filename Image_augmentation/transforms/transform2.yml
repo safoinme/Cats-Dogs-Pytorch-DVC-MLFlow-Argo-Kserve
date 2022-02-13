@@ -1,0 +1,37 @@
+__version__: 1.1.0
+transform:
+  __class_fullname__: Compose
+  additional_targets: {}
+  bbox_params: null
+  keypoint_params: null
+  p: 1.0
+  transforms:
+  - __class_fullname__: ShiftScaleRotate
+    always_apply: false
+    border_mode: 4
+    interpolation: 1
+    mask_value: null
+    p: 1
+    rotate_limit:
+    - -45
+    - 45
+    scale_limit:
+    - -0.09999999999999998
+    - 0.10000000000000009
+    shift_limit_x:
+    - -0.0625
+    - 0.0625
+    shift_limit_y:
+    - -0.0625
+    - 0.0625
+    value: null
+  - __class_fullname__: RandomBrightnessContrast
+    always_apply: false
+    brightness_by_max: true
+    brightness_limit:
+    - -0.2
+    - 0.2
+    contrast_limit:
+    - -0.2
+    - 0.2
+    p: 0.5

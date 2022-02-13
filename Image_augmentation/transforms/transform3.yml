@@ -1,0 +1,21 @@
+__version__: 1.1.0
+transform:
+  __class_fullname__: Compose
+  additional_targets: {}
+  bbox_params: null
+  keypoint_params: null
+  p: 1.0
+  transforms:
+  - __class_fullname__: HorizontalFlip
+    always_apply: false
+    p: 1
+  - __class_fullname__: RandomBrightnessContrast
+    always_apply: false
+    brightness_by_max: true
+    brightness_limit:
+    - -0.2
+    - 0.2
+    contrast_limit:
+    - -0.2
+    - 0.2
+    p: 0.8
