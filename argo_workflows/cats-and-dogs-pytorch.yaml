@@ -74,6 +74,13 @@ spec:
           python3 train.py
       workingDir: /app
   - name: retrive-best-model
+    inputs:
+      artifacts:
+      - name: repo-source
+        path: /app
+        git:
+          repo: https://github.com/safoinme/Cats-Dogs-Pytorch-DVC-MLFlow-Argo-Kserve.git
+          revision: "main"
     container:
       image: safoinme/python-mlflow-expirements:0.1.0
       env:
