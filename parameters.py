@@ -11,7 +11,7 @@ GRAD_ENABLE = False
 MODEL = "resnet18"
 LEARNING_RATE = 1e-2
 MOMENTUM = 0.9
-NUM_WORKERS = 2
+NUM_WORKERS = 1
 DATASET_HOME = "dataset/"
 #LOGS_PATH = "logs"
 

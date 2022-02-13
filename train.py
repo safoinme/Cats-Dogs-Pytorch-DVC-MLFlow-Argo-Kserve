@@ -152,7 +152,7 @@ def main(expirement_name):
     create_index_to_name_json(expirement_name, classes)
     create_model_flavor()
 
-    mlflow.log_artifact("data",artifact_path="data")
+    mlflow.log_artifact("data",artifact_path="model")
 
 if __name__ == "__main__":
     #mlflow.mlflow.set_tracking_uri("http://127.0.0.1:5000")
