@@ -67,6 +67,7 @@ RUN git clone https://github.com/pytorch/pytorch.git && cd pytorch && \
 RUN git clone https://github.com/pytorch/vision.git && cd vision && \
     python setup.py install
 
+RUN git clone https://github.com/pytorch/serve.git && cd serve/model-archiver && pip install .
 
 WORKDIR /app
 
