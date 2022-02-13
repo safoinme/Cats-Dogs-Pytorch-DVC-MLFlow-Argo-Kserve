@@ -5,6 +5,8 @@ def resnet18():
     model = models.resnet18(pretrained=True)
     for param in model.parameters():
         param.requires_grad = False
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, 2)
+    model.fc = nn.Sequential(
+            nn.Linear(model.fc.in_features, 2),
+            nn.LogSoftmax(dim=1)
+        )
     return model

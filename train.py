@@ -1,4 +1,4 @@
-from model import *
+from modelclassifier import *
 from data import *
 import parameters
 import torch.optim as optim
@@ -29,10 +29,15 @@ def create_artifcat_folder(expirement_name):
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
 
-def create_index_to_name_json(classes):
+def create_index_to_name_json(expirement_name, classes):
     indexes = {str(k): v for k, v in enumerate(classes)}
-    with open("data/{}/index_to_name.json", "w") as outfile:
+    with open("data/{}/index_to_name.json".format(expirement_name), "w+") as outfile:
         json.dump(indexes, outfile)
+
+def create_model_flavor():
+    file = open("data/save_format.txt","w+")
+    file.write("pytorch")
+    file.close()
 
 def training(model, train_loader, optimizer, epoch):
     model.train()  # Set model to training mode
@@ -102,7 +107,8 @@ def validation(model, val_loader, epoch):
     return val_epoch_loss, val_epoch_acc
 
 def main(expirement_name):
-    model = resnet18()
+    model_class = ImageClassifier()
+    model = model_class.pretrained()
     Dataset = DataModule()
     train_loader = Dataset.createTrainDataLoader()
     val_loader = Dataset.createValidationDataLoader()
@@ -131,7 +137,7 @@ def main(expirement_name):
         if val_acc > best_acc:
             best_acc = val_acc
             best_model_wts = copy.deepcopy(model.state_dict())       
-            model_save_name = "data/{}/model.pth".format(expirement_name)
+            model_save_name = "data/{}/model.pt".format(expirement_name)
             path = F"{model_save_name}"
             torch.save(model.state_dict(), path)
 
@@ -143,8 +149,10 @@ def main(expirement_name):
     print('Best val Acc: {:4f}'.format(best_acc))
 
 
-    create_index_to_name_json(classes)
-    mlflow.log_artifact("data/".format(expirement_name))
+    create_index_to_name_json(expirement_name, classes)
+    create_model_flavor()
+
+    mlflow.log_artifact("data",artifact_path="data")
 
 if __name__ == "__main__":
     #mlflow.mlflow.set_tracking_uri("http://127.0.0.1:5000")
