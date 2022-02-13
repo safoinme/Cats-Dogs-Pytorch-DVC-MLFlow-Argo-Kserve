@@ -70,7 +70,8 @@ spec:
                 key: DVC_S3_ENDPOINT_URL
       command: [sh, -c]
       args: 
-        - python3 train.py
+        - ./config_git.sh;
+          python3 train.py
       workingDir: /app
   - name: retrive-best-model
     container:
