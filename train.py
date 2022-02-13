@@ -1,4 +1,4 @@
-from modelclassifier import *
+from model import *
 from data import *
 import parameters
 import torch.optim as optim
