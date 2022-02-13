@@ -11,10 +11,12 @@ spec:
   templates:
   - name: cats-and-dogs-pytorch
     steps:
+    #- - name: data-augmentation          # train-original is run after pre-process and at same time with train-preprocessed step
+    #    template: dataset-augment
     - - name: train-original           # train-original is run after pre-process and at same time with train-preprocessed step
-        template: cats-adn-dogs-train
+        template: cats-and-dogs-train
     - - name: retrieve-best-model           # retrieve-best-model is run before the following steps and after training steps
-        template: mlflow-cats-and-dogs-best-model
+        template: retrive-best-model
     #- - name: deploy-model           # deploy-model is run after the retrieve-best-model step and only if retrieve-best-model have tf result
     #    template: mnist-deploy-tf-serving
     #    when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == pytorch"
@@ -25,30 +27,17 @@ spec:
     #        - name: model-uri
     #          value: "{{steps.retrieve-best-model.outputs.parameters.model-uri}}"
 
-  - name: mnist-train-original 
+  - name: cats-and-dogs-train
     inputs:
       artifacts:
       - name: repo-source
         path: /app
         git:
-          repo: https://github.com/safoinme/Mnist-MLFlow-dvc-Argo.git
-          revision: "argo"
+          repo: https://github.com/safoinme/Cats-Dogs-Pytorch-DVC-MLFlow-Argo-Kserve.git
+          revision: "main"
     container:
-      image: ouassine/kadm:0.1.0
-      volumeMounts:
-        - name: git-private-key
-          mountPath: "/secret/mountpath"
+      image: safoinme/pytorch-cpu-mlflow-dvc:0.1.0
       env:
-          - name: COMMIT_USER
-            valueFrom:
-              secretKeyRef:
-                name: git-credentials
-                key: GIT_USERNAME
-          - name: COMMIT_EMAIL
-            valueFrom:
-              secretKeyRef:
-                name: git-credentials
-                key: GIT_MAIL
           - name: MLFLOW_TRACKING_URI
             valueFrom:
               secretKeyRef:
@@ -79,86 +68,11 @@ spec:
               secretKeyRef:
                 name: dvc-access
                 key: DVC_S3_ENDPOINT_URL
-          - name: GIT_REPO
-            value: git@github.com:safoinme/Mnist-MLFlow-dvc-Argo.git
-          - name: GIT_BRANCH
-            value: "argo"
       command: [sh, -c]
       args: 
-        - ./config_git.sh;
-          python3 train.py
+        - python3 train.py
       workingDir: /app
-  - name: mnist-train-preprocessed
-    inputs:
-      artifacts:
-      - name: repo-source
-        path: /app
-        git:
-          repo: https://github.com/safoinme/Mnist-MLFlow-dvc-Argo.git
-          revision: "argo"
-    container:
-      image: ouassine/kadm:0.1.0
-      volumeMounts:
-        - name: git-private-key
-          mountPath: "/secret/mountpath"
-      env:
-          - name: COMMIT_USER
-            valueFrom:
-              secretKeyRef:
-                name: git-credentials
-                key: GIT_USERNAME
-          - name: COMMIT_EMAIL
-            valueFrom:
-              secretKeyRef:
-                name: git-credentials
-                key: GIT_MAIL
-          - name: MLFLOW_TRACKING_URI
-            valueFrom:
-              secretKeyRef:
-                name: mlflow-access
-                key: MLFLOW_TRACKING_URI
-          - name: MLFLOW_S3_ENDPOINT_URL
-            valueFrom:
-              secretKeyRef:
-                name: mlflow-access
-                key: MLFLOW_S3_ENDPOINT_URL
-          - name: AWS_ACCESS_KEY_ID
-            valueFrom:
-              secretKeyRef:
-                name: mlflow-access
-                key: AWS_ACCESS_KEY_ID
-          - name: AWS_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: mlflow-access
-                key: AWS_SECRET_ACCESS_KEY
-          - name: DVC_BUCKET
-            valueFrom:
-              secretKeyRef:
-                name: dvc-access
-                key: DVC_BUCKET
-          - name: DVC_S3_ENDPOINT_URL
-            valueFrom:
-              secretKeyRef:
-                name: dvc-access
-                key: DVC_S3_ENDPOINT_URL
-          - name: GIT_REPO
-            value: git@github.com:safoinme/Mnist-MLFlow-dvc-Argo.git
-          - name: GIT_BRANCH
-            value: "argo"
-      command: [sh, -c]
-      args: 
-        - ./config_git.sh;
-          python3 train-preprocess.py
-      workingDir: /app
-  - name: mlflow-mnist-best-model
-    inputs:
-      artifacts:
-      - name: repo-source
-        path: /app
-        git:
-          repo: https://github.com/safoinme/Mnist-MLFlow-dvc-Argo.git
-          revision: "argo"
+  - name: retrive-best-model
     container:
       image: safoinme/python-mlflow-expirements:0.1.0
       env:
@@ -202,28 +116,7 @@ spec:
   #    image: safoinme/python-mlflow-expirements:0.1.0
   #    command: [sh, -c]
   #    args: ["echo {{inputs.parameters.model-uri}} "]  
-  
-  - name: mnist-deploy-tf-serving
-    inputs:
-      parameters:
-      - name: model-uri
-      - name: predictor
-    resource:
-      action: create
-      manifest: |
-        apiVersion: "serving.kserve.io/v1beta1"
-        kind: "InferenceService"
-        metadata:
-          name: "mnist-example-s3"
-        spec:
-          predictor:
-            serviceAccountName: stminio
-            {{inputs.parameters.predictor}}:
-              storageUri: "{{inputs.parameters.model-uri}}"
-              resources:
-                limits:
-                  memory: 2Gi
-                  cpu: "1"
+
   #- name: mnist-deploy-tf-serving
   #  resource:
   #    action: create
