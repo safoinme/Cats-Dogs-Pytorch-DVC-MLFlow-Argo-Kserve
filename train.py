@@ -7,6 +7,7 @@ import mlflow
 import time
 import copy
 import os , json
+import shutil
 
 def mlflow_metrice(name, value, step):
     """Log a scalar value to MLflow """
@@ -33,6 +34,10 @@ def create_index_to_name_json(expirement_name, classes):
     indexes = {str(k): v for k, v in enumerate(classes)}
     with open("data/{}/index_to_name.json".format(expirement_name), "w+") as outfile:
         json.dump(indexes, outfile)
+
+def copy_model_and_handler(expirement_name, handler, model):
+    shutil.copy2(handler, "data/{}".format(expirement_name))
+    shutil.copy2(model, "data/{}".format(expirement_name))
 
 def create_model_flavor():
     file = open("data/save_format.txt","w+")
@@ -150,6 +155,7 @@ def main(expirement_name):
 
 
     create_index_to_name_json(expirement_name, classes)
+    copy_model_and_handler(expirement_name, "./handler.py", "./model.py")
     create_model_flavor()
 
     mlflow.log_artifact("data",artifact_path="model")
