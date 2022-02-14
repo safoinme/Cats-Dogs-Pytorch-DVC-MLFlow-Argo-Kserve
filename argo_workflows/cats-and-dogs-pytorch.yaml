@@ -82,7 +82,7 @@ spec:
           repo: https://github.com/safoinme/Cats-Dogs-Pytorch-DVC-MLFlow-Argo-Kserve.git
           revision: "main"
     container:
-      image: safoinme/pytorch-cpu-mlflow-dvc:0.1.0
+      image: safoinme/pytorch-cpu-mlflow-dvc:0.1.1
       env:
           - name: MLFLOW_TRACKING_URI
             valueFrom:
