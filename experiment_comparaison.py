@@ -4,6 +4,7 @@ from mlflow.tracking import MlflowClient
 from mlflow.store.artifact.runs_artifact_repo import RunsArtifactRepository
 import os 
 from mlflow.tracking.artifact_utils import _download_artifact_from_uri
+import subprocess
 
 
 def main():
@@ -87,6 +88,11 @@ def main():
     if not os.path.exists(local_dir):
         os.mkdir(local_dir)
 
+    models_dir = "/tmp/models/{}".format(model_name)
+    #local_dir = os.path.join(os.getcwd(), "tmp" )
+    if not os.path.exists(models_dir):
+        os.makedirs(models_dir)
+
     #Get the model Artifact from the storage bucket 
     local_path = client.download_artifacts(best_run, "model", local_dir)
 
@@ -98,16 +104,28 @@ def main():
     else :
         print("There is no improvement in the model")
 
+
+    model_file= "/tmp/artifact_downloads/model/data/cats-and-dogs/model.py"
+    serialized_file= "/tmp/artifact_downloads/model/data/cats-and-dogs/model.pt"
+    extra_files= "/tmp/artifact_downloads/model/data/cats-and-dogs/index_to_name.json"
+    handler_file= "/tmp/artifact_downloads/model/data/cats-and-dogs/handler.py"
+
+    result = subprocess.run(['torch-model-archiver',  '--model-name {}'.format(model_name), 
+        '--version {}'.format(latest_model_version), '--model-file {}'.format(model_file),  
+        '--serialized-file {}'.format(serialized_file), '--extra-files {}'.format(extra_files), 
+        '--handler {}'.format(handler_file), '--export-path {}'.format(models_dir) ], capture_output=True)
+
+    output = result.stdout.decode('utf-8')
     #models_dir = "/tmp/models/{}/{}/".format(model_name,int(latest_model_version))
     #local_dir = os.path.join(os.getcwd(), "tmp" )
     #if not os.path.exists(models_dir):
     #    os.makedirs(models_dir)
 
     #copy_tree("/tmp/artifact_downloads/model/data/model", models_dir)
-    #client.log_artifacts(best_run, "/tmp/models" ,"deployment-model" )
+    client.log_artifacts(best_run, "/tmp/models" ,"deployment-model" )
 
-    #artifact_uri = save_best_model_artifact_uri(model_name,int(latest_model_version))
-    #print(artifact_uri)
+    artifact_uri = save_best_model_artifact_uri(model_name,int(latest_model_version))
+    print(artifact_uri)
     
     #client.download_artifacts(best_run, "deployment-model", "/Users/safoinpers/MLArgo/mnist_example/")
     #/tmp/artifact_downloads/model/data/cats-and-dogs
