@@ -122,7 +122,7 @@ def main():
     #    os.makedirs(models_dir)
 
     #copy_tree("/tmp/artifact_downloads/model/data/model", models_dir)
-    client.log_artifacts(best_run, "/tmp/models" ,"deployment-model" )
+    client.log_artifacts(best_run, "/tmp/models/" ,"deployment-model" )
 
     artifact_uri = save_best_model_artifact_uri(model_name,int(latest_model_version))
     print(artifact_uri)
