@@ -115,14 +115,13 @@ def main():
         '--serialized-file {}'.format(serialized_file), '--extra-files {}'.format(extra_files), 
         '--handler {}'.format(handler_file), '--export-path {}'.format(models_dir) ], capture_output=True)
 
-    output = result.stdout.decode('utf-8')
     #models_dir = "/tmp/models/{}/{}/".format(model_name,int(latest_model_version))
     #local_dir = os.path.join(os.getcwd(), "tmp" )
     #if not os.path.exists(models_dir):
     #    os.makedirs(models_dir)
 
     #copy_tree("/tmp/artifact_downloads/model/data/model", models_dir)
-    client.log_artifacts(best_run, "/tmp/models/" ,"deployment-model" )
+    client.log_artifacts(best_run, models_dir  ,"deployment-model" )
 
     artifact_uri = save_best_model_artifact_uri(model_name,int(latest_model_version))
     print(artifact_uri)
