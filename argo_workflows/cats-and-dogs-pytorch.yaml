@@ -106,7 +106,8 @@ spec:
                 key: AWS_SECRET_ACCESS_KEY
       command: [sh, -c]
       args: 
-        - python3 experiment_comparaison.py;      
+        - python3 experiment_comparaison.py;     
+          ls /tmp/models/; 
       workingDir: /app
     outputs:
       parameters:
