@@ -123,14 +123,14 @@ def main():
 
     result = subprocess.run(
         [
-            "torch-model-archiver",
-            "--model-name {}".format(model_name),
-            "--version {}".format(latest_model_version),
-            "--model-file {}".format(model_file),
-            "--serialized-file {}".format(serialized_file),
-            "--extra-files {}".format(extra_files),
-            "--handler {}".format(handler_file),
-            "--export-path {}".format(models_dir),
+            "torch-model-archiver ",
+            "--model-name {} ".format(model_name),
+            "--version 2.0 ",
+            "--model-file {} ".format(model_file),
+            "--serialized-file {} ".format(serialized_file),
+            "--extra-files {} ".format(extra_files),
+            "--handler {} ".format(handler_file),
+            "--export-path {} ".format(models_dir),
         ]
     )
 
