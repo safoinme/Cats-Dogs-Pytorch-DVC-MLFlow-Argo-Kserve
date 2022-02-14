@@ -123,16 +123,22 @@ def main():
 
     result = subprocess.run(
         [
-            "torch-model-archiver ",
-            "--model-name {} ".format(model_name),
-            "--version 2.0 ",
-            "--model-file {} ".format(model_file),
-            "--serialized-file {} ".format(serialized_file),
-            "--extra-files {} ".format(extra_files),
-            "--handler {} ".format(handler_file),
-            "--export-path {} ".format(models_dir),
+            "torch-model-archiver --model-name {} --version 2.0 --model-file {} --serialized-file {} --extra-files {} --handler {} --export-path {} ".format(model_name,latest_model_version,model_file,serialized_file,extra_files,handler_file,models_dir),
         ]
     )
+
+    #result = subprocess.run(
+    #    [
+    #        "torch-model-archiver ",
+    #        "--model-name {} ".format(model_name),
+    #        "--version 2.0 ",
+    #        "--model-file {} ".format(model_file),
+    #        "--serialized-file {} ".format(serialized_file),
+    #        "--extra-files {} ".format(extra_files),
+    #        "--handler {} ".format(handler_file),
+    #        "--export-path {} ".format(models_dir),
+    #    ]
+    #)
 
     # models_dir = "/tmp/models/{}/{}/".format(model_name,int(latest_model_version))
     # local_dir = os.path.join(os.getcwd(), "tmp" )
