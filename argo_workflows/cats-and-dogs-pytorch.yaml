@@ -17,15 +17,17 @@ spec:
         template: cats-and-dogs-train
     - - name: retrieve-best-model           # retrieve-best-model is run before the following steps and after training steps
         template: retrive-best-model
-    #- - name: deploy-model           # deploy-model is run after the retrieve-best-model step and only if retrieve-best-model have tf result
-    #    template: mnist-deploy-tf-serving
-    #    when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == pytorch"
-    #    arguments:
-    #      parameters:
-    #        - name: predictor
-    #          value: "pytorch"
-    #        - name: model-uri
-    #          value: "{{steps.retrieve-best-model.outputs.parameters.model-uri}}"
+    - - name: deploy-model           # deploy-model is run after the retrieve-best-model step and only if retrieve-best-model have tf result
+        template: cats-dogs-deploy-torch-serving
+        when: "{{steps.retrieve-best-model.outputs.parameters.model-flavor}} == pytorch"
+        arguments:
+          parameters:
+            - name: model-name-version
+              value: "{{steps.retrieve-best-model.outputs.parameters.model-name-version}}"
+            - name: predictor
+              value: "pytorch"
+            - name: model-uri
+              value: "{{steps.retrieve-best-model.outputs.parameters.model-uri}}"
 
   - name: cats-and-dogs-train
     inputs:
@@ -114,9 +116,36 @@ spec:
         - name: model-flavor
           valueFrom:
             path: /tmp/artifact_downloads/model/data/save_format.txt
+        - name: model-name-version
+          valueFrom:
+            path: /tmp/model_name_version.txt
         - name: model-uri
           valueFrom:
             path: /tmp/best_model_artifact_uri.txt
+  
+  - name: cats-dogs-deploy-torch-serving
+    inputs:
+      parameters:
+      - name: model-uri
+      - name: model-name-version
+      - name: predictor
+    resource:
+      action: create
+      manifest: |
+        apiVersion: "serving.kserve.io/v1beta1"
+        kind: "InferenceService"
+        metadata:
+          name: "{{inputs.parameters.model-name-version}}"
+          namespace: kserve-deployement
+        spec:
+          predictor:
+            serviceAccountName: stminio
+            {{inputs.parameters.predictor}}:
+              storageUri: "{{inputs.parameters.model-uri}}"
+              resources:
+                limits:
+                  memory: 2Gi
+                  cpu: "1"
   #- name: mnist-deploy-tf-serving
   #  inputs:
   #    parameters:

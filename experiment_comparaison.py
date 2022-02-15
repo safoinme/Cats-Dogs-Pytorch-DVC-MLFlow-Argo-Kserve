@@ -82,6 +82,9 @@ def main():
         file = open("/tmp/best_model_artifact_uri.txt", "w+")
         file.write(artifact_uri)
         file.close()
+        file = open("/tmp/model_name_version.txt","w+")
+        file.write("{}-{}".format(model_name,model_version))
+        file.close()
         return artifact_uri
 
     # Return the best val accuracy run of The choosen exepiremnt
