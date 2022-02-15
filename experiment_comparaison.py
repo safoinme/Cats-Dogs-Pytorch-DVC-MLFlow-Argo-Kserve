@@ -5,6 +5,7 @@ from mlflow.store.artifact.runs_artifact_repo import RunsArtifactRepository
 import os
 from mlflow.tracking.artifact_utils import _download_artifact_from_uri
 import subprocess
+import shutil
 
 
 def main():
@@ -100,8 +101,7 @@ def main():
     if not os.path.exists(local_dir):
         os.mkdir(local_dir)
 
-    models_dir = "/tmp/models/{}".format(model_name)
-    # local_dir = os.path.join(os.getcwd(), "tmp" )
+    models_dir = "/tmp/models/model-store"
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
 
@@ -122,27 +122,15 @@ def main():
     handler_file = "/tmp/artifact_downloads/model/data/cats-and-dogs/handler.py"
 
     result = os.system("torch-model-archiver --model-name {} --version 2.0 --model-file {} --serialized-file {} --extra-files {} --handler {} --export-path {} ".format(model_name,model_file,serialized_file,extra_files,handler_file,models_dir))
-    #result = subprocess.run(
-    #    [
-    #        "torch-model-archiver ",
-    #        "--model-name {} ".format(model_name),
-    #        "--version 2.0 ",
-    #        "--model-file {} ".format(model_file),
-    #        "--serialized-file {} ".format(serialized_file),
-    #        "--extra-files {} ".format(extra_files),
-    #        "--handler {} ".format(handler_file),
-    #        "--export-path {} ".format(models_dir),
-    #    ]
-    #)
 
-    # models_dir = "/tmp/models/{}/{}/".format(model_name,int(latest_model_version))
-    # local_dir = os.path.join(os.getcwd(), "tmp" )
-    # if not os.path.exists(models_dir):
-    #    os.makedirs(models_dir)
 
-    # copy_tree("/tmp/artifact_downloads/model/data/model", models_dir)
+    config_dir = "/tmp/models/config"
+    if not os.path.exists(config_dir):
+        os.makedirs(config_dir)
 
-    client.log_artifacts(best_run, "/tmp/models", "deployment-model")
+    shutil.copy2("./config.properties", "/tmp/models/config/")
+
+    client.log_artifacts(best_run, "/tmp/models/", "deployment-model")
 
     artifact_uri = save_best_model_artifact_uri(model_name, int(latest_model_version))
     print(artifact_uri)
