@@ -121,7 +121,7 @@ def main():
     extra_files = "/tmp/artifact_downloads/model/data/cats-and-dogs/index_to_name.json"
     handler_file = "/tmp/artifact_downloads/model/data/cats-and-dogs/handler.py"
 
-    result = os.system("torch-model-archiver --model-name {} --version 2.0 --model-file {} --serialized-file {} --extra-files {} --handler {} --export-path {} ".format(model_name,latest_model_version,model_file,serialized_file,extra_files,handler_file,models_dir))
+    result = os.system("torch-model-archiver --model-name {} --version 2.0 --model-file {} --serialized-file {} --extra-files {} --handler {} --export-path {} ".format(model_name,model_file,serialized_file,extra_files,handler_file,models_dir))
     #result = subprocess.run(
     #    [
     #        "torch-model-archiver ",
