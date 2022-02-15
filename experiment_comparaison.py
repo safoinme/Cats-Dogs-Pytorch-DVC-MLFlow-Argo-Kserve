@@ -36,7 +36,7 @@ def main():
         return model_src
 
     def get_model_deployment_s3_src(best_run):
-        run_uri = "runs:/{}/model/{}".format(best_run, model_name)
+        run_uri = "runs:/{}/deployment-model/".format(best_run, model_name)
         model_src = RunsArtifactRepository.get_underlying_uri(run_uri)
         return model_src
 
