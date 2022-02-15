@@ -113,6 +113,8 @@ def main():
 
     if check_accuracy_improvment(latest_run_id, best_run) or latest_model_version == -1:
         registered_model = register_the_best_model(best_run)
+        if latest_model_version == -1 :
+            latest_model_version = 1
     else:
         print("There is no improvement in the model")
 
